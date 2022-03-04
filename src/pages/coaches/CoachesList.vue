@@ -1,12 +1,12 @@
 <template>
-  <section>Filter</section>
+  <section>
+    <coach-filter @change-filter="updateFilters"></coach-filter>
+  </section>
   <section>
     <base-card>
       <div class="controls">
         <base-button>Refresh</base-button>
-        <base-button link to="/register">
-          Register as Coach
-        </base-button>
+        <base-button link to="/register"> Register as Coach </base-button>
       </div>
       <ul v-if="hasCoaches">
         <coach-item
@@ -29,14 +29,44 @@
 import { mapGetters } from "vuex";
 
 import CoachItem from "@/components/coaches/CoachItem.vue";
+import CoachFilter from "@/components/coaches/CoachFilter.vue";
 
 export default {
-  components: { CoachItem },
+  components: { CoachItem, CoachFilter },
+  data() {
+    return {
+      activeFilters: {
+        frontend: true,
+        backend: true,
+        career: true,
+      },
+    };
+  },
   computed: {
     ...mapGetters("coaches", {
-      filteredCoaches: "coaches",
+      // filteredCoaches: "coaches",
       hasCoaches: "hasCoaches",
     }),
+    filteredCoaches() {
+      const coaches = this.$store.getters["coaches/coaches"];
+      return coaches.filter((coach) => {
+        if (this.activeFilters.frontend && coach.areas.includes("frontend")) {
+          return true;
+        }
+        if (this.activeFilters.backend && coach.areas.includes("backend")) {
+          return true;
+        }
+        if (this.activeFilters.career && coach.areas.includes("career")) {
+          return true;
+        }
+        return false;
+      });
+    },
+  },
+  methods: {
+    updateFilters(updatedFilters) {
+      this.activeFilters = updatedFilters;
+    },
   },
 };
 </script>
