@@ -38,7 +38,10 @@ export default {
         `https://find-a-coach-u03c9-default-rtdb.europe-west1.firebasedatabase.app/coaches.json`
       );
       if (!response.ok) {
-        // TODO: handle error
+        const error = new Error(
+          response.message || "Failed to fetch data from the backend!"
+        );
+        throw error;
       }
       const responseData = await response.json();
 
