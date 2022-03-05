@@ -30,7 +30,8 @@ export default {
     },
   },
   actions: {
-    registerCoach(context, payload) {
+    async registerCoach(context, payload) {
+      const userId = context.rootGetters.userId;
       const coachData = {
         id: context.rootGetters.userId,
         firstName: payload.first,
@@ -39,7 +40,25 @@ export default {
         hourlyRate: payload.rate,
         areas: payload.areas,
       };
-      context.commit("registerCoach", coachData);
+
+      const response = await fetch(
+        `https://find-a-coach-u03c9-default-rtdb.europe-west1.firebasedatabase.app/coaches/${userId}.json`,
+        {
+          method: "PUT",
+          body: JSON.stringify(coachData),
+        }
+      );
+
+      if (!response.ok) {
+        // error to handle later
+      }
+
+      // const responseData = await response.json();
+
+      context.commit("registerCoach", {
+        ...coachData,
+        id: userId,
+      });
     },
   },
   getters: {
