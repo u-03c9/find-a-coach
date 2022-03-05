@@ -1,36 +1,42 @@
 <template>
-  <base-dialog :show="!!error" title="An error occurred!" @close="handleError">
-    {{ error }}
-  </base-dialog>
-  <section>
-    <coach-filter @change-filter="updateFilters"></coach-filter>
-  </section>
-  <section>
-    <base-card>
-      <div class="controls">
-        <base-button @click="loadCoaches(true)">Refresh</base-button>
-        <base-button v-if="!isCoach" link to="/register">
-          Register as Coach
-        </base-button>
-      </div>
-      <div v-if="isLoading">
-        <base-spinner></base-spinner>
-      </div>
-      <ul v-else-if="hasCoaches">
-        <coach-item
-          v-for="coach in filteredCoaches"
-          :key="coach.id"
-          :id="coach.id"
-          :first-name="coach.firstName"
-          :last-name="coach.lastName"
-          :areas="coach.areas"
-          :rate="coach.hourlyRate"
-        >
-        </coach-item>
-      </ul>
-      <p v-else>No coaches found.</p>
-    </base-card>
-  </section>
+  <div>
+    <base-dialog
+      :show="!!error"
+      title="An error occurred!"
+      @close="handleError"
+    >
+      {{ error }}
+    </base-dialog>
+    <section>
+      <coach-filter @change-filter="updateFilters"></coach-filter>
+    </section>
+    <section>
+      <base-card>
+        <div class="controls">
+          <base-button @click="loadCoaches(true)">Refresh</base-button>
+          <base-button v-if="!isCoach" link to="/register">
+            Register as Coach
+          </base-button>
+        </div>
+        <div v-if="isLoading">
+          <base-spinner></base-spinner>
+        </div>
+        <ul v-else-if="hasCoaches">
+          <coach-item
+            v-for="coach in filteredCoaches"
+            :key="coach.id"
+            :id="coach.id"
+            :first-name="coach.firstName"
+            :last-name="coach.lastName"
+            :areas="coach.areas"
+            :rate="coach.hourlyRate"
+          >
+          </coach-item>
+        </ul>
+        <p v-else>No coaches found.</p>
+      </base-card>
+    </section>
+  </div>
 </template>
 
 <script>
