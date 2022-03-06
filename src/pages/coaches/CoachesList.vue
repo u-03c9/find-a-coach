@@ -49,8 +49,8 @@
 <script>
 import { mapGetters } from "vuex";
 
-import CoachItem from "@/components/coaches/CoachItem.vue";
-import CoachFilter from "@/components/coaches/CoachFilter.vue";
+import CoachItem from "../../components/coaches/CoachItem.vue";
+import CoachFilter from "../../components/coaches/CoachFilter.vue";
 
 export default {
   components: { CoachItem, CoachFilter },

@@ -37,8 +37,8 @@
 </template>
 
 <script>
-import BaseDialog from "@/components/ui/BaseDialog.vue";
-import BaseSpinner from "@/components/ui/BaseSpinner.vue";
+import BaseDialog from "../../components/ui/BaseDialog.vue";
+import BaseSpinner from "../..//components/ui/BaseSpinner.vue";
 export default {
   data() {
     return {

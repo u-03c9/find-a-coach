@@ -1,3 +1,7 @@
+<!-- <script setup>
+
+</script> -->
+
 <template>
   <the-header></the-header>
   <router-view v-slot="slotProps">
