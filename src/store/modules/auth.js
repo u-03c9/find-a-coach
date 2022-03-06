@@ -36,16 +36,16 @@ export default {
   actions: {
     login() {},
     async signup(context, payload) {
-      createUserWithEmailAndPassword(auth, payload.email, payload.password)
-        .then((user) => {
-          console.log("returned data from firebase auth", user);
-          context.commit("setUser", {
-            userId: user.uid,
-          });
-        })
-        .catch((error) => {
-          throw new Error(error.message || "Failed to authenticate");
-        });
+      const user = await createUserWithEmailAndPassword(
+        auth,
+        payload.email,
+        payload.password
+      );
+
+      console.log("returned data from firebase auth", user);
+      context.commit("setUser", {
+        userId: user.uid,
+      });
     },
   },
 };
