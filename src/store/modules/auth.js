@@ -44,7 +44,6 @@ export default {
   },
   mutations: {
     setUser(state, payload) {
-      console.log("here");
       localStorage.setItem("userId", payload.userId);
       localStorage.setItem("userToken", payload.userToken);
       localStorage.setItem("tokenExpireDate", payload.tokenExpireDate);
