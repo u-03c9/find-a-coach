@@ -25,41 +25,49 @@ export default {
       firebaseApp: firebaseApp,
       auth: auth,
       userId: null,
+      userToken: null,
     };
   },
   getters: {
     userId(state) {
       return state.userId;
     },
+    userToken(state) {
+      return state.userToken;
+    },
   },
   mutations: {
     setUser(state, payload) {
+      console.log(payload);
       state.userId = payload.userId;
+      state.userToken = payload.userToken;
     },
   },
   actions: {
     async login(context, payload) {
-      const user = await signInWithEmailAndPassword(
+      const response = await signInWithEmailAndPassword(
         auth,
         payload.email,
         payload.password
       );
 
-      console.log("returned data from firebase auth", user);
+      const user = response.user;
       context.commit("setUser", {
         userId: user.uid,
+        userToken: user.accessToken,
       });
     },
     async signup(context, payload) {
-      const user = await createUserWithEmailAndPassword(
+      const response = await createUserWithEmailAndPassword(
         auth,
         payload.email,
         payload.password
       );
 
-      console.log("returned data from firebase auth", user);
+      const user = response.user;
       context.commit("setUser", {
         userId: user.uid,
+        userToken: user.accessToken,
       });
     },
   },
