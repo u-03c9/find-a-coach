@@ -19,6 +19,8 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth();
 
+let logoutTimer;
+
 export default {
   state() {
     return {
@@ -26,6 +28,7 @@ export default {
       auth: auth,
       userId: null,
       userToken: null,
+      tokenExpireDate: null,
     };
   },
   getters: {
@@ -41,16 +44,49 @@ export default {
   },
   mutations: {
     setUser(state, payload) {
+      console.log("here");
+      localStorage.setItem("userId", payload.userId);
+      localStorage.setItem("userToken", payload.userToken);
+      localStorage.setItem("tokenExpireDate", payload.tokenExpireDate);
+
       state.userId = payload.userId;
       state.userToken = payload.userToken;
+      state.tokenExpireDate = payload.tokenExpireDate;
     },
     logout(state) {
+      clearTimeout(logoutTimer);
       state.auth.signOut();
+
+      localStorage.removeItem("userId");
+      localStorage.removeItem("userToken");
+      localStorage.removeItem("tokenExpireDate");
+
       state.userId = null;
       state.userToken = null;
+      state.tokenExpireDate = null;
     },
   },
   actions: {
+    tryLogin(context) {
+      const userId = localStorage.getItem("userId");
+      const userToken = localStorage.getItem("userToken");
+      const tokenExpireDate = localStorage.getItem("tokenExpireDate");
+
+      if (!userId || !userToken || !tokenExpireDate) return;
+
+      const remainingTime = tokenExpireDate - new Date().getTime();
+      if (remainingTime < 0) return;
+
+      logoutTimer = setTimeout(() => {
+        context.dispatch("logout");
+      }, remainingTime);
+
+      context.commit("setUser", {
+        userId,
+        userToken,
+        tokenExpireDate,
+      });
+    },
     logout(context) {
       context.commit("logout");
     },
@@ -65,6 +101,7 @@ export default {
       context.commit("setUser", {
         userId: user.uid,
         userToken: user.accessToken,
+        tokenExpireDate: new Date().getTime() + 3600000,
       });
     },
     async signup(context, payload) {
@@ -78,6 +115,7 @@ export default {
       context.commit("setUser", {
         userId: user.uid,
         userToken: user.accessToken,
+        tokenExpiresDate: new Date().getTime() + 3600000,
       });
     },
   },
