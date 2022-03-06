@@ -45,8 +45,16 @@ export default {
       state.userId = payload.userId;
       state.userToken = payload.userToken;
     },
+    logout(state) {
+      state.auth.signOut();
+      state.userId = null;
+      state.userToken = null;
+    },
   },
   actions: {
+    logout(context) {
+      context.commit("logout");
+    },
     async login(context, payload) {
       const response = await signInWithEmailAndPassword(
         auth,

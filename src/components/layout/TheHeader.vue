@@ -10,6 +10,9 @@
           <router-link :to="{ name: 'requests' }">Requests</router-link>
         </li>
         <li v-else><router-link :to="{ name: 'auth' }">Login</router-link></li>
+        <li v-if="isLoggedIn">
+          <base-button type="button" @click="logout">Logout</base-button>
+        </li>
       </ul>
     </nav>
   </header>
@@ -20,6 +23,12 @@ export default {
   computed: {
     isLoggedIn() {
       return this.$store.getters.isUserAuthenticated;
+    },
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch("logout");
+      this.$router.replace("/");
     },
   },
 };
