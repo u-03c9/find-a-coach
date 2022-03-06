@@ -1,5 +1,9 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCpAx9GLElvW3v1MGOoJNS7v8Z4J6kPjEI",
@@ -34,7 +38,18 @@ export default {
     },
   },
   actions: {
-    login() {},
+    async login(context, payload) {
+      const user = await signInWithEmailAndPassword(
+        auth,
+        payload.email,
+        payload.password
+      );
+
+      console.log("returned data from firebase auth", user);
+      context.commit("setUser", {
+        userId: user.uid,
+      });
+    },
     async signup(context, payload) {
       const user = await createUserWithEmailAndPassword(
         auth,
