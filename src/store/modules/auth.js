@@ -35,6 +35,9 @@ export default {
     userToken(state) {
       return state.userToken;
     },
+    isUserAuthenticated(state) {
+      return !!state.userToken;
+    },
   },
   mutations: {
     setUser(state, payload) {

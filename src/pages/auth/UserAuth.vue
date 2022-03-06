@@ -92,6 +92,8 @@ export default {
         this.error = error.message || "Failed to authenticate.";
       }
       this.isLoading = false;
+
+      this.$router.replace("/");
     },
     switchAuthMode() {
       if (this.mode === "login") {
