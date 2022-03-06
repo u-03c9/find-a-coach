@@ -10,9 +10,11 @@
       <base-card>
         <header>
           <h2>Interested? Reach out now!</h2>
-          <base-button link :to="contactLink">Contact</base-button>
+          <base-button link :to="contactLink" v-if="showContactButton">
+            Contact
+          </base-button>
         </header>
-        <router-view></router-view>
+        <router-view> </router-view>
       </base-card>
     </section>
     <section>
@@ -52,6 +54,9 @@ export default {
     },
     description() {
       return this.selectedCoach.description;
+    },
+    showContactButton() {
+      return !this.$route.path.endsWith("/contact");
     },
   },
   created() {

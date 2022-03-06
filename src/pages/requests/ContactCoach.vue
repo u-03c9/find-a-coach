@@ -76,6 +76,7 @@ textarea {
   font: inherit;
   border: 1px solid #ccc;
   padding: 0.15rem;
+  resize: vertical;
 }
 
 input:focus,
