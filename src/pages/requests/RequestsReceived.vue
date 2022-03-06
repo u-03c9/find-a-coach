@@ -1,18 +1,57 @@
+<script setup lang="ts">
+import { computed, onMounted, reactive } from "vue";
+import { useStore } from "vuex";
+import RequestItem from "../../components/requests/RequestItem.vue";
+
+const store = useStore();
+
+const state = reactive({
+  isLoading: false,
+  error: null,
+});
+
+const receivedRequests = computed(() => {
+  return store.getters["requests/requests"];
+});
+
+const hasRequests = computed(() => {
+  return store.getters["requests/hasRequests"];
+});
+
+async function loadRequests() {
+  state.isLoading = true;
+  try {
+    await store.dispatch("requests/fetchRequests");
+  } catch (error) {
+    state.error = error.message || "Failed to fetch requests from firebase!";
+  }
+  state.isLoading = false;
+}
+
+function handleError() {
+  state.error = null;
+}
+
+onMounted(async () => {
+  await loadRequests();
+});
+</script>
+
 <template>
   <div>
     <base-dialog
-      :show="!!error"
+      :show="!!state.error"
       title="An error occurred!"
       @close="handleError"
     >
-      {{ error }}
+      {{ state.error }}
     </base-dialog>
     <section>
       <base-card>
         <header>
           <h2>Requests Received</h2>
         </header>
-        <div v-if="isLoading">
+        <div v-if="state.isLoading">
           <base-spinner></base-spinner>
         </div>
         <ul v-else-if="hasRequests">
@@ -28,47 +67,6 @@
     </section>
   </div>
 </template>
-
-<script>
-import RequestItem from "../../components/requests/RequestItem.vue";
-
-export default {
-  components: {
-    RequestItem,
-  },
-  data() {
-    return {
-      isLoading: false,
-      error: null,
-    };
-  },
-  computed: {
-    receivedRequests() {
-      return this.$store.getters["requests/requests"];
-    },
-    hasRequests() {
-      return this.$store.getters["requests/hasRequests"];
-    },
-  },
-  methods: {
-    async loadRequests() {
-      this.isLoading = true;
-      try {
-        await this.$store.dispatch("requests/fetchRequests");
-      } catch (error) {
-        this.error = error.message || "Failed to fetch requests from firebase!";
-      }
-      this.isLoading = false;
-    },
-    handleError() {
-      this.error = null;
-    },
-  },
-  created() {
-    this.loadRequests();
-  },
-};
-</script>
 
 <style scoped>
 header {

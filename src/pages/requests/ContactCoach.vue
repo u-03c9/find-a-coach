@@ -1,14 +1,52 @@
+<script setup lang="ts">
+import { reactive } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
+
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
+
+const state = reactive({
+  email: "",
+  message: "",
+  formIsValid: true,
+});
+
+function validateForm() {
+  state.formIsValid = true;
+  if (
+    state.email === "" ||
+    !state.email.includes("@") ||
+    state.message === ""
+  ) {
+    state.formIsValid = false;
+  }
+}
+
+function submitForm() {
+  validateForm();
+  if (!state.formIsValid) return;
+  store.dispatch("requests/contactCoach", {
+    email: state.email,
+    message: state.message,
+    coachId: route.params.id,
+  });
+  router.replace("/");
+}
+</script>
+
 <template>
   <form @submit.prevent="submitForm">
     <div class="form-control">
       <label for="email">Your E-Mail</label>
-      <input type="email" id="email" v-model.trim="email" />
+      <input type="email" id="email" v-model.trim="state.email" />
     </div>
     <div class="form-control">
       <label for="message">Message</label>
-      <textarea id="message" rows="5" v-model.trim="message"></textarea>
+      <textarea id="message" rows="5" v-model.trim="state.message"></textarea>
     </div>
-    <p class="errors" v-if="!formIsValid">
+    <p class="errors" v-if="!state.formIsValid">
       Please enter a valid message and email.
     </p>
     <div class="actions">
@@ -16,40 +54,6 @@
     </div>
   </form>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      email: "",
-      message: "",
-      formIsValid: true,
-    };
-  },
-  methods: {
-    validateForm() {
-      this.formIsValid = true;
-      if (
-        this.email === "" ||
-        !this.email.includes("@") ||
-        this.message === ""
-      ) {
-        this.formIsValid = false;
-      }
-    },
-    submitForm() {
-      this.validateForm();
-      if (!this.formIsValid) return;
-      this.$store.dispatch("requests/contactCoach", {
-        email: this.email,
-        message: this.message,
-        coachId: this.$route.params.id,
-      });
-      this.$router.replace("/");
-    },
-  },
-};
-</script>
 
 <style scoped>
 form {

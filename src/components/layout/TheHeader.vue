@@ -1,3 +1,19 @@
+<script setup lang="ts">
+import { computed } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+
+const store = useStore();
+const router = useRouter();
+
+const isLoggedIn = computed(() => store.getters.isUserAuthenticated);
+
+const logout = () => {
+  store.dispatch("logout");
+  router.replace("/");
+};
+</script>
+
 <template>
   <header>
     <nav>
@@ -17,22 +33,6 @@
     </nav>
   </header>
 </template>
-
-<script>
-export default {
-  computed: {
-    isLoggedIn() {
-      return this.$store.getters.isUserAuthenticated;
-    },
-  },
-  methods: {
-    logout() {
-      this.$store.dispatch("logout");
-      this.$router.replace("/");
-    },
-  },
-};
-</script>
 
 <style scoped>
 header {

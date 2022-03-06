@@ -1,6 +1,10 @@
-<!-- <script setup>
+<script setup lang="ts">
+import TheHeader from "./components/layout/TheHeader.vue";
+import { useStore } from "vuex";
 
-</script> -->
+const store = useStore();
+store.dispatch("tryLogin");
+</script>
 
 <template>
   <the-header></the-header>
@@ -10,17 +14,6 @@
     </transition>
   </router-view>
 </template>
-
-<script>
-import TheHeader from "./components/layout/TheHeader.vue";
-
-export default {
-  components: { TheHeader },
-  created() {
-    this.$store.dispatch("tryLogin");
-  },
-};
-</script>
 
 <style>
 * {

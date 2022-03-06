@@ -1,28 +1,108 @@
+<script setup lang="ts">
+import BaseDialog from "../../components/ui/BaseDialog.vue";
+import BaseSpinner from "../..//components/ui/BaseSpinner.vue";
+import { reactive, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useStore } from "vuex";
+
+const router = useRouter();
+const route = useRoute();
+const store = useStore();
+
+const state = reactive({
+  email: "",
+  password: "",
+  formIsValid: true,
+  mode: "login",
+  isLoading: false,
+  error: null,
+});
+
+const submitButtonCaption = computed(() => {
+  if (state.mode === "login") {
+    return "Login";
+  } else {
+    return "Signup";
+  }
+});
+
+const switchModeButtonCaption = computed(() => {
+  if (state.mode === "login") {
+    return "Signup instead";
+  } else {
+    return "Login instead";
+  }
+});
+
+async function submitForm() {
+  state.formIsValid = true;
+  if (
+    state.email === "" ||
+    !state.email.includes("@") ||
+    state.password.length < 6
+  ) {
+    state.formIsValid = false;
+    return;
+  }
+  state.isLoading = true;
+  try {
+    const actionPayload = {
+      email: state.email,
+      password: state.password,
+    };
+    if (state.mode === "login") {
+      await store.dispatch("login", actionPayload);
+    } else if (state.mode === "signup") {
+      await store.dispatch("signup", actionPayload);
+    }
+  } catch (error) {
+    state.error = error.message || "Failed to authenticate.";
+  }
+  state.isLoading = false;
+
+  const redirectUrl = "/" + (route.query.redirect || "coaches");
+
+  router.replace(redirectUrl);
+}
+
+function switchAuthMode() {
+  if (state.mode === "login") {
+    state.mode = "signup";
+  } else if (state.mode === "signup") {
+    state.mode = "login";
+  }
+}
+
+function handleCloseErrorDialog() {
+  state.error = null;
+}
+</script>
+
 <template>
   <div>
     <base-dialog
-      :show="!!error"
+      :show="!!state.error"
       title="An error occurred"
       @close="handleCloseErrorDialog"
     >
-      <p>{{ error }}</p>
+      <p>{{ state.error }}</p>
     </base-dialog>
-    <base-dialog :show="isLoading" title="Authenticating..." fixed>
+    <base-dialog :show="state.isLoading" title="Authenticating..." fixed>
       <base-spinner></base-spinner>
     </base-dialog>
     <base-card>
       <form @submit.prevent="submitForm">
         <div class="form-control">
           <label for="email">E-Mail</label>
-          <input type="email" id="email" v-model.trim="email" />
+          <input type="email" id="email" v-model.trim="state.email" />
         </div>
 
         <div class="form-control">
           <label for="password">Password</label>
-          <input type="password" id="password" v-model.trim="password" />
+          <input type="password" id="password" v-model.trim="state.password" />
         </div>
 
-        <p v-if="!formIsValid">
+        <p v-if="!state.formIsValid">
           Please enter a valid email and password (must be at least 6 characters
           long)
         </p>
@@ -35,82 +115,6 @@
     </base-card>
   </div>
 </template>
-
-<script>
-import BaseDialog from "../../components/ui/BaseDialog.vue";
-import BaseSpinner from "../..//components/ui/BaseSpinner.vue";
-export default {
-  data() {
-    return {
-      email: "",
-      password: "",
-      formIsValid: true,
-      mode: "login",
-      isLoading: false,
-      error: null,
-    };
-  },
-  computed: {
-    submitButtonCaption() {
-      if (this.mode === "login") {
-        return "Login";
-      } else {
-        return "Signup";
-      }
-    },
-    switchModeButtonCaption() {
-      if (this.mode === "login") {
-        return "Signup instead";
-      } else {
-        return "Login instead";
-      }
-    },
-  },
-  methods: {
-    async submitForm() {
-      this.formIsValid = true;
-      if (
-        this.email === "" ||
-        !this.email.includes("@") ||
-        this.password.length < 6
-      ) {
-        this.formIsValid = false;
-        return;
-      }
-      this.isLoading = true;
-      try {
-        const actionPayload = {
-          email: this.email,
-          password: this.password,
-        };
-        if (this.mode === "login") {
-          await this.$store.dispatch("login", actionPayload);
-        } else if (this.mode === "signup") {
-          await this.$store.dispatch("signup", actionPayload);
-        }
-      } catch (error) {
-        this.error = error.message || "Failed to authenticate.";
-      }
-      this.isLoading = false;
-
-      const redirectUrl = "/" + (this.$route.query.redirect || "coaches");
-
-      this.$router.replace(redirectUrl);
-    },
-    switchAuthMode() {
-      if (this.mode === "login") {
-        this.mode = "signup";
-      } else if (this.mode === "signup") {
-        this.mode = "login";
-      }
-    },
-    handleCloseErrorDialog() {
-      this.error = null;
-    },
-  },
-  components: { BaseDialog, BaseSpinner },
-};
-</script>
 
 <style scoped>
 form {

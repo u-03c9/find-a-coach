@@ -53,6 +53,7 @@ export default {
       state.tokenExpireDate = payload.tokenExpireDate;
     },
     logout(state) {
+      console.log("mutation/logout");
       clearTimeout(logoutTimer);
       state.auth.signOut();
 
@@ -87,6 +88,7 @@ export default {
       });
     },
     logout(context) {
+      console.log("action/logout");
       context.commit("logout");
     },
     async login(context, payload) {

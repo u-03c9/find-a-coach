@@ -1,3 +1,47 @@
+<script setup lang="ts">
+import { computed, onBeforeMount, reactive, ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import { useStore } from "vuex";
+
+const store = useStore();
+const route = useRoute();
+
+const state = reactive({
+  id: route.params.id,
+  selectedCoach: null,
+});
+
+const fullName = computed(() => {
+  return state.selectedCoach.firstName + " " + state.selectedCoach.lastName;
+});
+
+const contactLink = computed(() => {
+  return route.path + "/contact";
+});
+
+const areas = computed(() => {
+  return state.selectedCoach.areas;
+});
+
+const rate = computed(() => {
+  return state.selectedCoach.hourlyRate;
+});
+
+const description = computed(() => {
+  return state.selectedCoach.description;
+});
+
+const showContactButton = computed(() => {
+  return !route.path.endsWith("/contact");
+});
+
+onBeforeMount(() => {
+  state.selectedCoach = store.getters["coaches/coaches"].find(
+    (coach) => coach.id === state.id
+  );
+});
+</script>
+
 <template>
   <div>
     <section>
@@ -30,39 +74,3 @@
     </section>
   </div>
 </template>
-
-<script>
-export default {
-  props: ["id"],
-  data() {
-    return {
-      selectedCoach: null,
-    };
-  },
-  computed: {
-    fullName() {
-      return this.selectedCoach.firstName + " " + this.selectedCoach.lastName;
-    },
-    contactLink() {
-      return this.$route.path + "/contact";
-    },
-    areas() {
-      return this.selectedCoach.areas;
-    },
-    rate() {
-      return this.selectedCoach.hourlyRate;
-    },
-    description() {
-      return this.selectedCoach.description;
-    },
-    showContactButton() {
-      return !this.$route.path.endsWith("/contact");
-    },
-  },
-  created() {
-    this.selectedCoach = this.$store.getters["coaches/coaches"].find(
-      (coach) => coach.id === this.id
-    );
-  },
-};
-</script>

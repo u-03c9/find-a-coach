@@ -1,3 +1,22 @@
+<script setup lang="ts">
+import { computed } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import CoachForm from "../../components/coaches/CoachForm.vue";
+
+const store = useStore();
+const router = useRouter();
+
+const isCoach = computed(() => {
+  return store.getters["coaches/isCoach"];
+});
+
+function saveData(data) {
+  store.dispatch("coaches/registerCoach", data);
+  router.replace("/coaches");
+}
+</script>
+
 <template>
   <section>
     <base-card>
@@ -6,23 +25,3 @@
     </base-card>
   </section>
 </template>
-
-<script>
-import CoachForm from "../../components/coaches/CoachForm.vue";
-export default {
-  components: { CoachForm },
-  computed: {
-    isCoach() {
-      return this.$store.getters["coaches/isCoach"];
-    },
-  },
-  methods: {
-    saveData(data) {
-      this.$store.dispatch("coaches/registerCoach", data);
-      this.$router.replace("/coaches");
-    },
-  },
-};
-</script>
-
-<style scoped></style>
